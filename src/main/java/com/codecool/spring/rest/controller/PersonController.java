@@ -18,13 +18,11 @@ import java.io.IOException;
 public class PersonController {
 
     private final PersonRepository personRepository;
-    private final AddressService addressService;
     private final PersonService personService;
 
     @Autowired
-    public PersonController(PersonRepository personRepository, AddressService addressService, PersonService personService) {
+    public PersonController(PersonRepository personRepository, PersonService personService) {
         this.personRepository = personRepository;
-        this.addressService = addressService;
         this.personService = personService;
     }
 
