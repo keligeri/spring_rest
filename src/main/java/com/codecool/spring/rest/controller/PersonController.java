@@ -43,9 +43,7 @@ public class PersonController {
 
     @PostMapping(value = "/add", produces = "application/json")
     public String savePerson(@RequestBody Person person) {
-        Address address = personService.saveOrUpdateAddress(person);
-        person.setAddress(address);
-        personRepository.save(person);
+        personService.savePerson(person);
         return "{\"status\": \"ok\"}";
     }
 
