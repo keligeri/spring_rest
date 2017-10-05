@@ -43,4 +43,11 @@ public class PersonService {
         }
     }
 
+    public void update(long id, Person updatedPerson) {
+        updatedPerson.setId(id);
+        Address address = saveOrUpdateAddress(updatedPerson);
+        updatedPerson.setAddress(address);
+
+        personRepository.save(updatedPerson);
+    }
 }
