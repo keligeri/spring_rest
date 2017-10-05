@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+#IntelliJ
+.idea/
+
+# target
+target/**
+
+spring_rest.iml
