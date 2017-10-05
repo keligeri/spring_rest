@@ -1,10 +1,9 @@
 package com.codecool.spring.rest.controller;
 
 import com.codecool.spring.rest.exception.PersonNotFoundException;
-import com.codecool.spring.rest.model.Address;
 import com.codecool.spring.rest.model.Person;
 import com.codecool.spring.rest.repository.PersonRepository;
-import com.codecool.spring.rest.service.AddressService;
+import com.codecool.spring.rest.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,36 +15,55 @@ import java.io.IOException;
 @RequestMapping(value = "/person")
 public class PersonController {
 
+    private static final String statusOk = "{\"status\": \"ok\"}";
     private final PersonRepository personRepository;
-    private final AddressService addressService;
+    private final PersonService personService;
 
     @Autowired
-    public PersonController(PersonRepository personRepository, AddressService addressService) {
+    public PersonController(PersonRepository personRepository, PersonService personService) {
         this.personRepository = personRepository;
-        this.addressService = addressService;
+        this.personService = personService;
     }
 
-    @GetMapping(value = {"/" , ""})
-    public Iterable<Person> helloWorld() {
+    @GetMapping(value = {"/", ""})
+    public Iterable<Person> read() {
         return personRepository.findAll();
     }
 
-    @GetMapping("/{personId}")
-    public Person getPersonById(@PathVariable Long personId) throws PersonNotFoundException {
-        Person person = personRepository.findOne(personId);
-        if (person == null) {
-            throw new PersonNotFoundException("Person with id: " + personId + " not found!");
-        }
-
-        return person;
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Person getById(@PathVariable Long id) throws PersonNotFoundException {
+        isValidPerson(id);
+        return personRepository.findOne(id);
     }
 
-    @PostMapping(value = "/add", produces = "application/json")
-    public String savePerson(@RequestBody Person person) {
-        Address address = addressService.saveOrUpdateAddress(person);
-        person.setAddress(address);
-        personRepository.save(person);
-        return "{\"status\": \"ok\"}";
+    @RequestMapping(value = "/add", produces = "application/json", method = RequestMethod.POST)
+    public String save(@RequestBody Person person) {
+        personService.savePerson(person);
+        return statusOk;
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public String update(@PathVariable long id, @RequestBody Person updatedPerson) throws PersonNotFoundException {
+        isValidPerson(id);
+
+        personService.update(id, updatedPerson);
+        return statusOk;
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public String delete(@PathVariable long id) throws PersonNotFoundException {
+        isValidPerson(id);
+
+        Person person = personRepository.findOne(id);
+        personRepository.delete(person);
+        return statusOk;
+    }
+
+    private void isValidPerson(long id) throws PersonNotFoundException {
+        Person person = personRepository.findOne(id);
+        if (person == null) {
+            throw new PersonNotFoundException("Person with id: " + id + " not found!");
+        }
     }
 
     @ExceptionHandler(PersonNotFoundException.class)
