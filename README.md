@@ -1,3 +1,3 @@
 ## Spring boot practicing - Rest-API
 
-Rest-api practicing before build Magyar Vöröskereszt rest-api with spring.
+Rest-api practicing before building rest-api to Magyar Vöröskereszt.
