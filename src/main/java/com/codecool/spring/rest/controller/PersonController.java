@@ -5,6 +5,7 @@ import com.codecool.spring.rest.model.Address;
 import com.codecool.spring.rest.model.Person;
 import com.codecool.spring.rest.repository.PersonRepository;
 import com.codecool.spring.rest.service.AddressService;
+import com.codecool.spring.rest.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +19,13 @@ public class PersonController {
 
     private final PersonRepository personRepository;
     private final AddressService addressService;
+    private final PersonService personService;
 
     @Autowired
-    public PersonController(PersonRepository personRepository, AddressService addressService) {
+    public PersonController(PersonRepository personRepository, AddressService addressService, PersonService personService) {
         this.personRepository = personRepository;
         this.addressService = addressService;
+        this.personService = personService;
     }
 
     @GetMapping(value = {"/" , ""})
@@ -42,7 +45,7 @@ public class PersonController {
 
     @PostMapping(value = "/add", produces = "application/json")
     public String savePerson(@RequestBody Person person) {
-        Address address = addressService.saveOrUpdateAddress(person);
+        Address address = personService.saveOrUpdateAddress(person);
         person.setAddress(address);
         personRepository.save(person);
         return "{\"status\": \"ok\"}";

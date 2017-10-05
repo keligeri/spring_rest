@@ -56,6 +56,13 @@ public class AddressController {
         return "{\"status\": \"ok\"}";
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public String update(@PathVariable long id, @RequestBody Address address) {
+        addressService.update(id, address);
+
+        return "{\"status\": \"ok\"}";
+    }
+
     @ExceptionHandler(AddressNotFoundException.class)
     public void handleAddressNotFound(AddressNotFoundException exception, HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
