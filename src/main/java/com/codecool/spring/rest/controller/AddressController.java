@@ -17,6 +17,7 @@ public class AddressController {
 
     private final AddressRepository addressRepository;
     private final AddressService addressService;
+    private static final String statusOk = "{\"status\": \"ok\"}";
 
     @Autowired
     public AddressController(AddressRepository addressRepository, AddressService addressService) {
@@ -29,12 +30,10 @@ public class AddressController {
         return addressRepository.findAll();
     }
 
-    @RequestMapping(value = "/{addressId}", method = RequestMethod.GET)
-    public Address getById(@PathVariable Long id) throws AddressNotFoundException {
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Address getById(@PathVariable long id) throws AddressNotFoundException {
         Address address = addressRepository.findOne(id);
-        if (address == null) {
-            throw new AddressNotFoundException("Address with id: " + id + " not found!");
-        }
+        isValidAddress(address, id);
 
         return address;
     }
@@ -42,30 +41,37 @@ public class AddressController {
     @RequestMapping(value = "/add", produces = "application/json", method = RequestMethod.POST)
     public String save(@RequestBody Address address) {
         addressRepository.save(address);
-        return "{\"status\": \"ok\"}";
+        return statusOk;
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public String update(@PathVariable long id, @RequestBody Address updatedAddress) throws AddressNotFoundException {
+        Address address = addressRepository.findOne(id);
+        isValidAddress(address, id);
+
+        addressService.update(id, updatedAddress);
+        return statusOk;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable long id) throws AddressNotFoundException {
         Address address = addressRepository.findOne(id);
-        if (address == null) {
-            throw new AddressNotFoundException("Address with id: " + id + " not found!");
-        }
+        isValidAddress(address, id);
+
         addressService.deleteDependency(address);
         addressRepository.delete(address);
-        return "{\"status\": \"ok\"}";
-    }
-
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public String update(@PathVariable long id, @RequestBody Address address) {
-        addressService.update(id, address);
-
-        return "{\"status\": \"ok\"}";
+        return statusOk;
     }
 
     @ExceptionHandler(AddressNotFoundException.class)
     public void handleAddressNotFound(AddressNotFoundException exception, HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
+    }
+
+    private void isValidAddress(Address address, long id) throws AddressNotFoundException {
+        if (address == null) {
+            throw new AddressNotFoundException("Address with id: " + id + " not found!");
+        }
     }
 
 }
