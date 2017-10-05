@@ -16,19 +16,13 @@ public class AddressService {
         this.personService = personService;
     }
 
-    public Address saveOrUpdateAddress(Person person) {
-        Address current = person.getAddress();
-        Address address = addressRepository.findByCityAndZipCode(current.getCity(), current.getZipCode());
-        if (address == null) {
-            addressRepository.save(current);
-            return current;
-        }
-        return address;
-    }
-
     public void deleteDependency(Address address) {
         personService.deleteAddress(address.getPersons());
         address.setPersons(null);
     }
 
+    public void update(long id, Address address) {
+        Address updatedAddress = addressRepository.findOne(id);
+
+    }
 }
