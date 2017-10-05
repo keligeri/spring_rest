@@ -1,7 +1,6 @@
 package com.codecool.spring.rest.service;
 
 import com.codecool.spring.rest.model.Address;
-import com.codecool.spring.rest.model.Person;
 import com.codecool.spring.rest.repository.AddressRepository;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ public class AddressService {
     }
 
     public void update(long id, Address address) {
-        Address updatedAddress = addressRepository.findOne(id);
-
+        address.setId(id);
+        addressRepository.save(address);
     }
 }
