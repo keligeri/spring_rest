@@ -38,9 +38,7 @@ public class PersonService {
     }
 
     void deleteAddress(Set<Person> persons) {
-        for (Person person : persons) {
-            person.setAddress(null);
-        }
+        persons.forEach(person -> person.setAddress(null));
     }
 
     public void update(long id, Person updatedPerson) {

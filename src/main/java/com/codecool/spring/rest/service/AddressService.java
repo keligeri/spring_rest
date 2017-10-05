@@ -10,7 +10,6 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
     private final PersonService personService;
-    private Address address;
 
     @Autowired
     public AddressService(AddressRepository addressRepository, PersonService personService) {
