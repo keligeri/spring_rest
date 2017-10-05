@@ -16,24 +16,28 @@ public class PersonService {
     private final AddressRepository addressRepository;
 
     @Autowired
-    public PersonService(PersonRepository personRepository, AddressRepository addressRepository) {
+    public  PersonService(PersonRepository personRepository, AddressRepository addressRepository) {
         this.personRepository = personRepository;
         this.addressRepository = addressRepository;
     }
 
-    public Address saveOrUpdateAddress(Person person) {
+    public void savePerson(Person person) {
+        Address address = saveOrUpdateAddress(person);
+        person.setAddress(address);
+        personRepository.save(person);
+    }
+
+    private Address saveOrUpdateAddress(Person person) {
         Address current = person.getAddress();
         Address address = addressRepository.findByCityAndZipCode(current.getCity(), current.getZipCode());
         if (address == null) {
             addressRepository.save(current);
             return current;
         }
-
         return address;
     }
 
-
-    public void deleteAddress(Set<Person> persons) {
+    void deleteAddress(Set<Person> persons) {
         for (Person person : persons) {
             person.setAddress(null);
         }

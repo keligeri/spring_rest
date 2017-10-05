@@ -17,7 +17,12 @@ public class AddressService {
         this.personService = personService;
     }
 
-    public void deleteDependency(Address address) {
+    public void delete(Address address) {
+        deleteDependency(address);
+        addressRepository.delete(address);
+    }
+
+    private void deleteDependency(Address address) {
         personService.deleteAddress(address.getPersons());
         address.setPersons(null);
     }

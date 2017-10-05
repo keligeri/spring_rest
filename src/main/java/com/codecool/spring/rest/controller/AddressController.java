@@ -32,10 +32,9 @@ public class AddressController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Address getById(@PathVariable long id) throws AddressNotFoundException {
-        Address address = addressRepository.findOne(id);
-        isValidAddress(address, id);
+        isValidAddress(id);
 
-        return address;
+        return addressRepository.findOne(id);
     }
 
     @RequestMapping(value = "/add", produces = "application/json", method = RequestMethod.POST)
@@ -46,8 +45,7 @@ public class AddressController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public String update(@PathVariable long id, @RequestBody Address updatedAddress) throws AddressNotFoundException {
-        Address address = addressRepository.findOne(id);
-        isValidAddress(address, id);
+        isValidAddress(id);
 
         addressService.update(id, updatedAddress);
         return statusOk;
@@ -55,11 +53,10 @@ public class AddressController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public String delete(@PathVariable long id) throws AddressNotFoundException {
-        Address address = addressRepository.findOne(id);
-        isValidAddress(address, id);
+        isValidAddress(id);
 
-        addressService.deleteDependency(address);
-        addressRepository.delete(address);
+        Address address = addressRepository.findOne(id);
+        addressService.delete(address);
         return statusOk;
     }
 
@@ -68,7 +65,8 @@ public class AddressController {
         response.sendError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
     }
 
-    private void isValidAddress(Address address, long id) throws AddressNotFoundException {
+    private void isValidAddress(long id) throws AddressNotFoundException {
+        Address address = addressRepository.findOne(id);
         if (address == null) {
             throw new AddressNotFoundException("Address with id: " + id + " not found!");
         }

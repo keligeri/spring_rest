@@ -1,10 +1,8 @@
 package com.codecool.spring.rest.controller;
 
 import com.codecool.spring.rest.exception.PersonNotFoundException;
-import com.codecool.spring.rest.model.Address;
 import com.codecool.spring.rest.model.Person;
 import com.codecool.spring.rest.repository.PersonRepository;
-import com.codecool.spring.rest.service.AddressService;
 import com.codecool.spring.rest.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +15,7 @@ import java.io.IOException;
 @RequestMapping(value = "/person")
 public class PersonController {
 
+    private static final String statusOk = "{\"status\": \"ok\"}";
     private final PersonRepository personRepository;
     private final PersonService personService;
 
@@ -26,7 +25,7 @@ public class PersonController {
         this.personService = personService;
     }
 
-    @GetMapping(value = {"/" , ""})
+    @GetMapping(value = {"/", ""})
     public Iterable<Person> helloWorld() {
         return personRepository.findAll();
     }
@@ -44,7 +43,7 @@ public class PersonController {
     @PostMapping(value = "/add", produces = "application/json")
     public String savePerson(@RequestBody Person person) {
         personService.savePerson(person);
-        return "{\"status\": \"ok\"}";
+        return statusOk;
     }
 
     @ExceptionHandler(PersonNotFoundException.class)
