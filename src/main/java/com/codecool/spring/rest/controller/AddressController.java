@@ -15,9 +15,9 @@ import java.io.IOException;
 @RequestMapping(value = "/address")
 public class AddressController {
 
+    private static final String statusOk = "{\"status\": \"ok\"}";
     private final AddressRepository addressRepository;
     private final AddressService addressService;
-    private static final String statusOk = "{\"status\": \"ok\"}";
 
     @Autowired
     public AddressController(AddressRepository addressRepository, AddressService addressService) {
