@@ -8,8 +8,12 @@ import com.codecool.spring.rest.repository.PersonRepository;
 import org.junit.Before;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
+import org.springframework.test.context.TestContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,10 +44,12 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 @WebAppConfiguration
 public class AddressControllerTest {
 
-    private String contentType = MediaType.APPLICATION_JSON_UTF8_VALUE;
+    private final static Logger logger = LoggerFactory.getLogger(AddressController.class);
+    private static final String contentType = MediaType.APPLICATION_JSON_UTF8_VALUE;
+
+    @Rule public TestName testName = new TestName();
 
     private MockMvc mockMvc;
-
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
     private Address zalaegerszeg;
@@ -71,7 +78,6 @@ public class AddressControllerTest {
     @Before
     public void setup() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
-
         this.personRepository.deleteAll();
         this.addressRepository.deleteAll();
 
@@ -94,10 +100,23 @@ public class AddressControllerTest {
 
     @Test
     public void read_Equals_IfGetUserId() throws Exception {
-        mockMvc.perform(get("/address/" + this.budapest.getId()))
+        logger.info("About execute {}", testName.getMethodName());
+
+        String addressId = String.valueOf(this.budapest.getId());
+        int zipCode = (int) this.budapest.getZipCode();
+        mockMvc.perform(get("/address/" + addressId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$.zipCode", is(this.budapest.getZipCode())));
+                .andExpect(jsonPath("$.zipCode", is(zipCode)));
+    }
+
+    @Test
+    public void read_NotFound_IfGetInvalidAddressId() throws Exception {
+        logger.info("About execute {}", testName.getMethodName());
+        Address newAddress = new Address(5000, "Babosdöbréte");
+        mockMvc.perform(get("/address/" + newAddress.getId()))
+                .andExpect(status().isNotFound())
+                .andExpect(status().is4xxClientError());
     }
 
     protected String json(Object o) throws IOException {
