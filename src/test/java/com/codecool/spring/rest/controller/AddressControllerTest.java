@@ -39,9 +39,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 @WebAppConfiguration
 public class AddressControllerTest {
 
-    private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(),
-            Charset.forName("utf8"));
+    private String contentType = MediaType.APPLICATION_JSON_UTF8_VALUE;
 
     private MockMvc mockMvc;
 
@@ -61,52 +59,52 @@ public class AddressControllerTest {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-        void setConverters(HttpMessageConverter<?>[] converters) {
-            this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
-            .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
-            .findAny()
-            .orElse(null);
+    void setConverters(HttpMessageConverter<?>[] converters) {
+        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
+        .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
+        .findAny()
+        .orElse(null);
 
-            assertNotNull("the JSON message converter must not be null", this.mappingJackson2HttpMessageConverter);
+        assertNotNull("the JSON message converter must not be null", this.mappingJackson2HttpMessageConverter);
     }
 
     @Before
     public void setup() throws Exception {
-            this.mockMvc = webAppContextSetup(webApplicationContext).build();
+        this.mockMvc = webAppContextSetup(webApplicationContext).build();
 
-            this.addressRepository.deleteAll();
-            this.personRepository.deleteAll();
+        this.personRepository.deleteAll();
+        this.addressRepository.deleteAll();
 
-            updateDb();
+        updateDb();
     }
 
     public void updateDb() {
-            this.budapest = new Address(1146, "Budapest");
-            this.zalaegerszeg = new Address(8900, "Babosdöbréte");
+        this.budapest = new Address(1146, "Budapest");
+        this.zalaegerszeg = new Address(8900, "Babosdöbréte");
 
-            this.addressRepository.save(budapest);
-            this.addressRepository.save(zalaegerszeg);
+        this.addressRepository.save(budapest);
+        this.addressRepository.save(zalaegerszeg);
 
-            this.sanyi = new Person("Sándorka", 44, budapest);
-            this.geza = new Person("GézaFiam", 17, zalaegerszeg);
+        this.sanyi = new Person("Sándorka", 44, budapest);
+        this.geza = new Person("GézaFiam", 17, zalaegerszeg);
 
-            this.personRepository.save(sanyi);
-            this.personRepository.save(geza);
+        this.personRepository.save(sanyi);
+        this.personRepository.save(geza);
     }
 
     @Test
     public void read_Equals_IfGetUserId() throws Exception {
-            mockMvc.perform(get("/address/1"))
-            .andExpect(content().contentType(contentType))
-            .andExpect(jsonPath("$[0].zipCode", is(this.budapest.getZipCode())));
-
+        mockMvc.perform(get("/address/" + this.budapest.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$.zipCode", is(this.budapest.getZipCode())));
     }
-    
+
     protected String json(Object o) throws IOException {
-            MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-            this.mappingJackson2HttpMessageConverter.write(
-            o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
-            return mockHttpOutputMessage.getBodyAsString();
+        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
+        this.mappingJackson2HttpMessageConverter.write(
+        o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
+        return mockHttpOutputMessage.getBodyAsString();
     }
 
 }
