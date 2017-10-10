@@ -29,6 +29,7 @@ import java.util.Arrays;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -97,7 +98,7 @@ public class AddressControllerTest {
     @Test
     public void read_Equals_IfGetTwoUser() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
-        mockMvc.perform(get("/address"))
+        mockMvc.perform(get("/address").with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -108,7 +109,7 @@ public class AddressControllerTest {
 
         String addressId = String.valueOf(this.budapest.getId());
         int zipCode = (int) this.budapest.getZipCode();
-        mockMvc.perform(get("/address/" + addressId))
+        mockMvc.perform(get("/address/" + addressId).with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.zipCode", is(zipCode)))
@@ -119,7 +120,7 @@ public class AddressControllerTest {
     public void getById_Is4xxClientError_IfGetInvalidAddressId() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
         Address newAddress = new Address(5000, "Babosdöbréte");
-        mockMvc.perform(get("/address/" + newAddress.getId()))
+        mockMvc.perform(get("/address/" + newAddress.getId()).with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().isNotFound())
                 .andExpect(status().is4xxClientError());
     }
@@ -130,7 +131,7 @@ public class AddressControllerTest {
 
         Address newAddress = new Address(4500, "Zalaszentiván");
         String addressJson = json(newAddress);
-        mockMvc.perform(post("/address/add")
+        mockMvc.perform(post("/address/").with(user("admin").password("admin").roles("ADMIN"))
                 .contentType(contentType)
                 .content(addressJson))
                 .andExpect(status().isOk())
@@ -143,7 +144,7 @@ public class AddressControllerTest {
 
         this.budapest.setCity("Vác");
         String addressJson = json(this.budapest);
-        mockMvc.perform(put("/address/" + this.budapest.getId())
+        mockMvc.perform(put("/address/" + this.budapest.getId()).with(user("admin").password("admin").roles("ADMIN"))
                 .content(addressJson)
                 .contentType(contentType))
                 .andExpect(status().isOk());
@@ -153,7 +154,7 @@ public class AddressControllerTest {
     public void delete_Is2xx_IfDeleteAddress() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
 
-        mockMvc.perform(delete("/address/" + this.budapest.getId()))
+        mockMvc.perform(delete("/address/" + this.budapest.getId()).with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(status().isOk());
         // check size too
