@@ -37,7 +37,7 @@ public class AddressController {
         return addressRepository.findOne(id);
     }
 
-    @RequestMapping(value = "/add", produces = "application/json", method = RequestMethod.POST)
+    @RequestMapping(value = "/", produces = "application/json", method = RequestMethod.POST)
     public String save(@RequestBody Address address) {
         addressRepository.save(address);
         return statusOk;
