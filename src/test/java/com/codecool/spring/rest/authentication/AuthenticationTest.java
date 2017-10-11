@@ -20,11 +20,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -72,17 +70,38 @@ public class AuthenticationTest {
     }
 
     @Test
-    public void configure_Authenticate_IfLoginAsAdmin() throws Exception {
+    public void getVerb_Authenticate_IfLoginAsAdmin() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
         mockMvc.perform(get("/address").with(user("admin").password("admin").roles("ADMIN")))
                 .andExpect(status().is2xxSuccessful());
     }
 
     @Test
-    public void configure_Authenticate_IfLoginWithFakeAdmin() throws Exception {
+    public void getVerb_Authenticate_IfLoginWithWrongPassword() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
         mockMvc.perform(get("/address").with(user("admin").password("wrongPassword").roles("ADMIN")))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void getVerb_Authenticate_IfLoginWithWrongUsername() throws Exception {
+        logger.info("About execute {}", testName.getMethodName());
+        mockMvc.perform(get("/address/1").with(user("adminka").password("admin").roles("ADMIN")))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void getVerb_Authenticate_IfLoginWithUserRole() throws Exception {
+        logger.info("About execute {}", testName.getMethodName());
+        mockMvc.perform(get("/address/1").with(user("adminka").password("admin").roles("USER")))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void getVerb_Authenticate_IfLoginAsUser() throws Exception {
+        logger.info("About execute {}", testName.getMethodName());
+        mockMvc.perform(get("/address").with(user("user").password("user").roles("USER")))
+                .andExpect(status().is4xxClientError());
     }
 
 
