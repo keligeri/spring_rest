@@ -14,10 +14,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureAuth(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
+        auth
+            .inMemoryAuthentication()
                 .withUser("admin")
                 .password("admin")
-                .roles("ADMIN");
+                .roles("ADMIN")
+            .and()
+                .withUser("user")
+                .password("user")
+                .roles("USER");
     }
 
     @Override
@@ -27,8 +32,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/person/**").permitAll()
             .antMatchers("/address/**").hasRole("ADMIN")
             .anyRequest().authenticated()
-        .and().formLogin()
-        .and().logout()
         .and().httpBasic()
         .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
