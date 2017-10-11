@@ -15,14 +15,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -33,6 +41,7 @@ public class AuthenticationTest {
 
     @Rule public TestName testName = new TestName();
     private final static Logger logger = LoggerFactory.getLogger(AddressController.class);
+    private static final String contentType = MediaType.APPLICATION_JSON_UTF8_VALUE;
 
     private MockMvc mockMvc;
 
@@ -40,11 +49,23 @@ public class AuthenticationTest {
     @Autowired private PersonRepository personRepository;
     @Autowired private WebApplicationContext webApplicationContext;
 
+    private HttpMessageConverter mappingJackson2HttpMessageConverter;
+
     private Address zalaegerszeg;
     private Address budapest;
 
     private Person geza;
     private Person sanyi;
+
+    @Autowired
+    void setConverters(HttpMessageConverter<?>[] converters) {
+        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
+                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
+                .findAny()
+                .orElse(null);
+
+        assertNotNull("the JSON message converter must not be null", this.mappingJackson2HttpMessageConverter);
+    }
 
     @Before
     public void setup() throws Exception {
@@ -77,21 +98,22 @@ public class AuthenticationTest {
     }
 
     @Test
-    public void getVerb_Authenticate_IfLoginWithWrongPassword() throws Exception {
+    public void getVerb_NotAuthenticate_IfLoginWithWrongPassword() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
         mockMvc.perform(get("/address").with(user("admin").password("wrongPassword").roles("ADMIN")))
                 .andExpect(status().is4xxClientError());
+        // return with 2xx instead of 4xx
     }
 
     @Test
-    public void getVerb_Authenticate_IfLoginWithWrongUsername() throws Exception {
+    public void getVerb_NotAuthenticate_IfLoginWithWrongUsername() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
         mockMvc.perform(get("/address/1").with(user("adminka").password("admin").roles("ADMIN")))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
-    public void getVerb_Authenticate_IfLoginWithUserRole() throws Exception {
+    public void getVerb_NotAuthenticate_IfLoginWithUserRole() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
         mockMvc.perform(get("/address/1").with(user("adminka").password("admin").roles("USER")))
                 .andExpect(status().is4xxClientError());
@@ -102,6 +124,78 @@ public class AuthenticationTest {
         logger.info("About execute {}", testName.getMethodName());
         mockMvc.perform(get("/address").with(user("user").password("user").roles("USER")))
                 .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void postVerb_NotAuthenticate_IfLoginAsUser() throws Exception {
+        logger.info("About execute {}", testName.getMethodName());
+
+        Address newAddress = new Address(4500, "Zalaszentiván");
+        String addressJson = json(newAddress);
+        mockMvc.perform(post("/address/").with(user("user").password("user").roles("USER"))
+                .contentType(contentType)
+                .content(addressJson))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void postVerb_Authenticate_IfLoginAsAdmin() throws Exception {
+        logger.info("About execute {}", testName.getMethodName());
+
+        Address newAddress = new Address(4500, "Zalaszentiván");
+        String addressJson = json(newAddress);
+        mockMvc.perform(post("/address/").with(user("admin").password("admin").roles("ADMIN"))
+                .contentType(contentType)
+                .content(addressJson))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void deleteVerb_NotAuthenticate_IfLoginWithWrongPassword() throws Exception {
+        logger.info("About execute {}", testName.getMethodName());
+        mockMvc.perform(delete("/address/" + budapest.getId()).with(user("asd").password("admin").roles("ADMIN")))
+                .andExpect(status().is4xxClientError());
+        // return with 2xx, i don't know why
+    }
+
+    @Test
+    public void deleteVerb_Authenticate_IfLoginAsAdmin() throws Exception {
+        logger.info("About execute {}", testName.getMethodName());
+        mockMvc.perform(delete("/address/" + budapest.getId()).with(user("admin").password("admin").roles("ADMIN")))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void putVerb_NotAuthenticate_IfLoginWithWrongPass() throws Exception {
+        logger.info("About execute {}", testName.getMethodName());
+
+        this.budapest.setCity("zalaegerszeg");
+        String addressJson = json(this.budapest);
+        mockMvc.perform(put("/address/" + budapest.getId()).with(user("admin").password("wrong").roles("ADMIN"))
+                .contentType(contentType)
+                .content(addressJson))
+                .andExpect(status().is4xxClientError());
+        // return with 2xx, i don't know why
+    }
+
+    @Test
+    public void putVerb_Authenticate_IfLoginAsAdmin() throws Exception {
+        logger.info("About execute {}", testName.getMethodName());
+
+        this.budapest.setCity("zalaegerszeg");
+        String addressJson = json(this.budapest);
+        mockMvc.perform(put("/address/" + budapest.getId()).with(user("admin").password("admin").roles("ADMIN"))
+                .contentType(contentType)
+                .content(addressJson))
+            .andExpect(status().is2xxSuccessful());
+    }
+
+
+    protected String json(Object o) throws IOException {
+        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
+        this.mappingJackson2HttpMessageConverter.write(
+                o, MediaType.APPLICATION_JSON_UTF8, mockHttpOutputMessage);
+        return mockHttpOutputMessage.getBodyAsString();
     }
 
 
