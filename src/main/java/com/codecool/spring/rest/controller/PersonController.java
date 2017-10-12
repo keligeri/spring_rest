@@ -36,7 +36,7 @@ public class PersonController {
         return personRepository.findOne(id);
     }
 
-    @RequestMapping(value = "/add", produces = "application/json", method = RequestMethod.POST)
+    @RequestMapping(value = "/", produces = "application/json", method = RequestMethod.POST)
     public String save(@RequestBody Person person) {
         personService.savePerson(person);
         return statusOk;
