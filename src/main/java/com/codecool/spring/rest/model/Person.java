@@ -1,8 +1,6 @@
 package com.codecool.spring.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.internal.Nullable;
-
 import javax.persistence.*;
 import javax.persistence.Id;
 
