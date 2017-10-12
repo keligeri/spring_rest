@@ -21,6 +21,7 @@ import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
@@ -81,7 +82,7 @@ public class AddressControllerTest {
         updateDb();
     }
 
-    public void updateDb() {
+    private void updateDb() {
         this.budapest = new Address(1146, "Budapest");
         this.zalaegerszeg = new Address(8900, "Babosdöbréte");
 
@@ -98,8 +99,8 @@ public class AddressControllerTest {
     @Test
     public void read_Equals_IfGetTwoUser() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
-        mockMvc.perform(get("/address").with(user("admin").password("admin").roles("ADMIN")))
-                .andExpect(status().isOk())
+        ResultActions perform = mockMvc.perform(get("/address").with(user("admin").roles("ADMIN")));
+        perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
 
@@ -109,8 +110,8 @@ public class AddressControllerTest {
 
         String addressId = String.valueOf(this.budapest.getId());
         int zipCode = (int) this.budapest.getZipCode();
-        mockMvc.perform(get("/address/" + addressId).with(user("admin").password("admin").roles("ADMIN")))
-                .andExpect(status().isOk())
+        ResultActions perform = mockMvc.perform(get("/address/" + addressId).with(user("admin").roles("ADMIN")));
+        perform.andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.zipCode", is(zipCode)))
                 .andExpect(jsonPath("$.city", is("Budapest")));
@@ -120,8 +121,8 @@ public class AddressControllerTest {
     public void getById_Is4xxClientError_IfGetInvalidAddressId() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
         Address newAddress = new Address(5000, "Babosdöbréte");
-        mockMvc.perform(get("/address/" + newAddress.getId()).with(user("admin").password("admin").roles("ADMIN")))
-                .andExpect(status().isNotFound())
+        ResultActions perform = mockMvc.perform(get("/address/" + newAddress.getId()).with(user("admin").roles("ADMIN")));
+        perform.andExpect(status().isNotFound())
                 .andExpect(status().is4xxClientError());
     }
 
@@ -131,10 +132,10 @@ public class AddressControllerTest {
 
         Address newAddress = new Address(4500, "Zalaszentiván");
         String addressJson = json(newAddress);
-        mockMvc.perform(post("/address/").with(user("admin").password("admin").roles("ADMIN"))
+        ResultActions perform = mockMvc.perform(post("/address/").with(user("admin").roles("ADMIN"))
                 .contentType(contentType)
-                .content(addressJson))
-                .andExpect(status().isOk())
+                .content(addressJson));
+        perform.andExpect(status().isOk())
                 .andExpect(status().is2xxSuccessful());
     }
 
@@ -144,23 +145,22 @@ public class AddressControllerTest {
 
         this.budapest.setCity("Vác");
         String addressJson = json(this.budapest);
-        mockMvc.perform(put("/address/" + this.budapest.getId()).with(user("admin").password("admin").roles("ADMIN"))
+        ResultActions perform = mockMvc.perform(put("/address/" + this.budapest.getId()).with(user("admin").roles("ADMIN"))
                 .content(addressJson)
-                .contentType(contentType))
-                .andExpect(status().isOk());
+                .contentType(contentType));
+        perform.andExpect(status().isOk());
     }
 
     @Test
     public void delete_Is2xx_IfDeleteAddress() throws Exception {
         logger.info("About execute {}", testName.getMethodName());
 
-        mockMvc.perform(delete("/address/" + this.budapest.getId()).with(user("admin").password("admin").roles("ADMIN")))
-                .andExpect(status().is2xxSuccessful())
+        ResultActions perform = mockMvc.perform(delete("/address/" + this.budapest.getId()).with(user("admin").roles("ADMIN")));
+        perform.andExpect(status().is2xxSuccessful())
                 .andExpect(status().isOk());
-        // check size too
     }
 
-    protected String json(Object o) throws IOException {
+    private String json(Object o) throws IOException {
         MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
         this.mappingJackson2HttpMessageConverter.write(
                 o, MediaType.APPLICATION_JSON_UTF8, mockHttpOutputMessage);
