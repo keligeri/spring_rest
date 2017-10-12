@@ -1,5 +1,6 @@
 package com.codecool.spring.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -17,7 +18,6 @@ public class Address {
     private long zipCode;
     private String city;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "address")
     private Set<Person> persons = new HashSet<>();
 
