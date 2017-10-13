@@ -16,7 +16,7 @@ public class Person {
     private String name;
     private int age;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonBackReference
     private Address address;
 

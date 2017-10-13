@@ -18,7 +18,7 @@ public class Address {
     private long zipCode;
     private String city;
 
-    @OneToMany(mappedBy = "address")
+    @OneToMany(mappedBy = "address", cascade = CascadeType.PERSIST)
     private Set<Person> persons = new HashSet<>();
 
     public Address() {}
