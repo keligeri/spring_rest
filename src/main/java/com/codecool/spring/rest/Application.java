@@ -20,16 +20,16 @@ public class Application {
     CommandLineRunner runner(AddressRepository addressRepository,
                                      PersonRepository personRepository) {
         return args -> {
-            Person gergo = new Person("Gergő", 24);
-            Person pisti = new Person("Pista", 20);
+            Person gergo = new Person("Gergő", 24, new Address(8900L, "Zalaegerszeg"));
+            Person pisti = new Person("Pista", 20, new Address(1146L, "Budapest"));
 
-            Address zeg = new Address(8900L, "Zalaegerszeg");
-            Address pest = new Address(1146L, "Budapest");
-            addressRepository.save(zeg);
-            addressRepository.save(pest);
-
-            gergo.setAddress(zeg);
-            pisti.setAddress(pest);
+//            Address zeg = new Address(8900L, "Zalaegerszeg");
+//            Address pest = new Address(1146L, "Budapest");
+//            addressRepository.save(zeg);
+//            addressRepository.save(pest);
+//
+//            gergo.setAddress(zeg);
+//            pisti.setAddress(pest);
 
             personRepository.save(gergo);
             personRepository.save(pisti);
