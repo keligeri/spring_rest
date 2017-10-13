@@ -34,6 +34,10 @@ public class Address {
         this.persons = persons;
     }
 
+    public void addPerson(Person person) {
+        this.persons.add(person);
+    }
+
     public Set<Person> getPersons() {
         return persons;
     }
