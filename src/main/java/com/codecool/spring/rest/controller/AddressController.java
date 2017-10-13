@@ -16,30 +16,27 @@ import java.io.IOException;
 public class AddressController {
 
     private static final String statusOk = "{\"status\": \"ok\"}";
-    private final AddressRepository addressRepository;
     private final AddressService addressService;
 
     @Autowired
-    public AddressController(AddressRepository addressRepository, AddressService addressService) {
-        this.addressRepository = addressRepository;
+    public AddressController(AddressService addressService) {
         this.addressService = addressService;
     }
 
     @GetMapping(value = {"/", ""})
     public Iterable<Address> read() {
-        return addressRepository.findAll();
+        return addressService.findAll();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Address getById(@PathVariable long id) throws AddressNotFoundException {
         isValidAddress(id);
-
-        return addressRepository.findOne(id);
+        return addressService.findById(id);
     }
 
     @RequestMapping(value = "/", produces = "application/json", method = RequestMethod.POST)
     public String save(@RequestBody Address address) {
-        addressRepository.save(address);
+        addressService.save(address);
         return statusOk;
     }
 
@@ -55,8 +52,7 @@ public class AddressController {
     public String delete(@PathVariable long id) throws AddressNotFoundException {
         isValidAddress(id);
 
-        Address address = addressRepository.findOne(id);
-        addressService.delete(address);
+        addressService.delete(id);
         return statusOk;
     }
 
@@ -66,7 +62,7 @@ public class AddressController {
     }
 
     private void isValidAddress(long id) throws AddressNotFoundException {
-        Address address = addressRepository.findOne(id);
+        Address address = addressService.findById(id);
         if (address == null) {
             throw new AddressNotFoundException("Address with id: " + id + " not found!");
         }
