@@ -1,7 +1,7 @@
 package com.codecool.spring.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import javax.persistence.Id;
 
@@ -16,7 +16,8 @@ public class Person {
     private String name;
     private int age;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JsonBackReference
     private Address address;
 
     public Person() {}
