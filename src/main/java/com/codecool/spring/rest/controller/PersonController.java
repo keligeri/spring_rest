@@ -16,29 +16,28 @@ import java.io.IOException;
 public class PersonController {
 
     private static final String statusOk = "{\"status\": \"ok\"}";
-    private final PersonRepository personRepository;
     private final PersonService personService;
 
     @Autowired
-    public PersonController(PersonRepository personRepository, PersonService personService) {
-        this.personRepository = personRepository;
+    public PersonController(PersonService personService) {
         this.personService = personService;
     }
 
     @GetMapping(value = {"/", ""})
     public Iterable<Person> read() {
-        return personRepository.findAll();
+        return personService.findAll();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Person getById(@PathVariable Long id) throws PersonNotFoundException {
         isValidPerson(id);
-        return personRepository.findOne(id);
+
+        return personService.findById(id);
     }
 
     @RequestMapping(value = "/", produces = "application/json", method = RequestMethod.POST)
     public String save(@RequestBody Person person) {
-        personService.savePerson(person);
+        personService.save(person);
         return statusOk;
     }
 
@@ -54,13 +53,12 @@ public class PersonController {
     public String delete(@PathVariable long id) throws PersonNotFoundException {
         isValidPerson(id);
 
-        Person person = personRepository.findOne(id);
-        personRepository.delete(person);
+        personService.delete(id);
         return statusOk;
     }
 
     private void isValidPerson(long id) throws PersonNotFoundException {
-        Person person = personRepository.findOne(id);
+        Person person = personService.findById(id);
         if (person == null) {
             throw new PersonNotFoundException("Person with id: " + id + " not found!");
         }
