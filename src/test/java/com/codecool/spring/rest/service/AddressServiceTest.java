@@ -1,85 +1,80 @@
 package com.codecool.spring.rest.service;
 
-import com.codecool.spring.rest.Application;
 import com.codecool.spring.rest.model.Address;
-import com.codecool.spring.rest.model.Person;
 import com.codecool.spring.rest.repository.AddressRepository;
-import com.codecool.spring.rest.repository.PersonRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
-@WebAppConfiguration
+@RunWith(MockitoJUnitRunner.class)
 public class AddressServiceTest {
 
-    @Autowired private AddressService addressService;
-    @Autowired private AddressRepository addressRepository;
+    @InjectMocks
+    private AddressService addressService;
 
-    @Autowired private PersonRepository personRepository;
+    @Mock
+    private AddressRepository addressRepository;
 
     private Address zalaegerszeg;
     private Address budapest;
 
-    private Person geza;
-    private Person sanyi;
-
     @Before
     public void setup() throws Exception {
-        this.personRepository.deleteAll();
-        this.addressRepository.deleteAll();
-
         updateDb();
     }
 
     private void updateDb() {
-        this.budapest = new Address(1146, "Budapest");
-        this.zalaegerszeg = new Address(8900, "Babosdöbréte");
+        budapest = new Address(1146, "Budapest");
+        zalaegerszeg = new Address(8900, "Babosdöbréte");
+        List<Address> addressList = Arrays.asList(budapest, zalaegerszeg);
 
-        this.addressRepository.save(budapest);
-        this.addressRepository.save(zalaegerszeg);
-
-        this.sanyi = new Person("Sándorka", 44, budapest);
-        this.geza = new Person("GézaFiam", 17, zalaegerszeg);
-
-        this.personRepository.save(sanyi);
-        this.personRepository.save(geza);
+        when(addressRepository.findAll()).thenReturn(addressList);
+        when(addressRepository.findOne(1L)).thenReturn(budapest);
     }
 
     @Test
-    public void save_AddPersonToo_IfPostAddress() {
+    public void findAll_IfInvoke_ThenReturnWithList() {
+        List<Address> addresses = addressService.findAll();
+        assertEquals(2, addresses.size());
+        assertEquals(budapest.getCity(), addresses.get(0).getCity());
+        assertEquals(zalaegerszeg.getZipCode(), addresses.get(1).getZipCode());
+    }
+
+    @Test
+    public void findOne_IfInvoke_ThenReturnAddress() {
+        Address address = addressService.findById(1L);
+        assertEquals(budapest.getZipCode(), address.getZipCode());
+        assertEquals(budapest.getCity(), address.getCity());
+    }
+
+    @Test
+    public void save_IfSaveAddress_ThenReturnNothing() {
         Address newAddress = new Address(2500, "Gyula");
-        Person newPerson = new Person("új személy", 44);
-//        addressService.save();
+        doNothing().when(addressRepository).save(newAddress);
 
+        addressService.save(newAddress);
     }
 
     @Test
-    public void update_CityEquals_IfUpdateAddressCity() {
-        budapest.setCity("NemBudapest");
-        long id = budapest.getId();
-        addressService.update(id, budapest);
-        assertEquals("NemBudapest", addressRepository.findOne(id).getCity());
+    public void update_IfInvoke_DoNothing() {
+        doNothing().when(addressRepository).save(budapest);
+        addressService.update(1, budapest);
     }
 
     @Test
-    public void update_ZipCodeEquals_IfUpdateAddressZipCode() {
-        budapest.setZipCode(5000);
-        long id = budapest.getId();
-        addressService.update(id, budapest);
-        assertEquals(5000, addressRepository.findOne(id).getZipCode());
+    public void delete_IfInvoke_DoNothing() {
+        doNothing().when(addressRepository).delete(1L);
+        addressService.delete(1L);
     }
 
 }
