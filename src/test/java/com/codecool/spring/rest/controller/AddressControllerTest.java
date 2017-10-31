@@ -29,13 +29,12 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /*
  * @WebMvcTest --> auto-configure Spring mvc infrastructure for unit tests. Test controllers without starting full HTTP server.
- * @WithMockUser --> mock authentication
+ * @WithMockUser --> mock authentication, because these unitTest use default pass
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(AddressController.class)
@@ -90,8 +89,8 @@ public class AddressControllerTest {
 
         perform.andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$.zipCode", is( (int) zalaegerszeg.getZipCode())))
-                .andExpect(jsonPath("$.city", is( zalaegerszeg.getCity())));
+                .andExpect(jsonPath("$.zipCode", is((int) zalaegerszeg.getZipCode())))
+                .andExpect(jsonPath("$.city", is(zalaegerszeg.getCity())));
     }
 
     @Test
