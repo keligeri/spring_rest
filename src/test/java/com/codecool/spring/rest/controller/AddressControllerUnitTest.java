@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(AddressController.class)
 @WithMockUser
-public class AddressControllerTest {
+public class AddressControllerUnitTest {
 
     private final static Logger logger = LoggerFactory.getLogger(AddressController.class);
     private static final String contentType = MediaType.APPLICATION_JSON_UTF8_VALUE;
