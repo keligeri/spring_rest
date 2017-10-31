@@ -2,7 +2,6 @@ package com.codecool.spring.rest.controller;
 
 import com.codecool.spring.rest.exception.AddressNotFoundException;
 import com.codecool.spring.rest.model.Address;
-import com.codecool.spring.rest.repository.AddressRepository;
 import com.codecool.spring.rest.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/address")
@@ -24,7 +24,7 @@ public class AddressController {
     }
 
     @GetMapping(value = {"/", ""})
-    public Iterable<Address> read() {
+    public List<Address> getAll() {
         return addressService.findAll();
     }
 
