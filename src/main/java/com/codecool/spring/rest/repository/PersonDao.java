@@ -16,6 +16,16 @@ public class PersonDao implements PersonDaoInterface {
     @PersistenceContext
     private EntityManager em;
 
+    public List<Person> getByAge(int age1, int age2) {
+        return em.createNamedQuery("findPersonsByBetweenTwoAge", Person.class)
+                .setParameter("personAge1", age1)
+                .setParameter("personAge2", age2).getResultList();
+    }
+
+    public Person getByName(String name){
+        return em.createNamedQuery("findPersonByName", Person.class).setParameter("personName", name).getSingleResult();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<Person> getAll() {
