@@ -1,6 +1,5 @@
 package com.codecool.spring.rest.utils;
 
-import com.codecool.spring.rest.Application;
 import com.codecool.spring.rest.model.Address;
 import com.codecool.spring.rest.model.Person;
 import com.codecool.spring.rest.repository.AddressRepository;
