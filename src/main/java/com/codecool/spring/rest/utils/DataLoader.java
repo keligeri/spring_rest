@@ -29,8 +29,8 @@ public class DataLoader implements ApplicationRunner {
 
         Address zeg = new Address(8900L, "Zalaegerszeg");
         Address pest = new Address(1146L, "Budapest");
-        addressRepository.save(zeg);
-        addressRepository.save(pest);
+//        addressRepository.save(zeg);
+//        addressRepository.save(pest);
 
         gergo.setAddress(zeg);
         pisti.setAddress(pest);
