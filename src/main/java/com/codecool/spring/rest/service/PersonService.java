@@ -1,7 +1,7 @@
 package com.codecool.spring.rest.service;
 
 import com.codecool.spring.rest.model.Person;
-import com.codecool.spring.rest.repository.abstraction.PersonDaoInterface;
+import com.codecool.spring.rest.repository.dao.PersonDaoInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.codecool.spring.rest.repository.abstraction;
+package com.codecool.spring.rest.repository.dao;
 
 import com.codecool.spring.rest.model.Person;
 

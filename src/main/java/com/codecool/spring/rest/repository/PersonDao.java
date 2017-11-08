@@ -1,7 +1,7 @@
 package com.codecool.spring.rest.repository;
 
 import com.codecool.spring.rest.model.Person;
-import com.codecool.spring.rest.repository.abstraction.PersonDaoInterface;
+import com.codecool.spring.rest.repository.dao.PersonDaoInterface;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
