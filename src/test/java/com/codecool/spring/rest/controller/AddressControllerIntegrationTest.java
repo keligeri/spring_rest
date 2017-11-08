@@ -2,7 +2,6 @@ package com.codecool.spring.rest.controller;
 
 import com.codecool.spring.rest.Application;
 import com.codecool.spring.rest.model.Address;
-import com.codecool.spring.rest.model.Person;
 import com.codecool.spring.rest.repository.AddressRepository;
 import com.codecool.spring.rest.repository.PersonRepository;
 import org.junit.Before;

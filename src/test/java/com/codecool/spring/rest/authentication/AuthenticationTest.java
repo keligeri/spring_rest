@@ -1,19 +1,11 @@
 package com.codecool.spring.rest.authentication;
 
 import com.codecool.spring.rest.Application;
-import com.codecool.spring.rest.controller.AddressController;
 import com.codecool.spring.rest.model.Address;
-import com.codecool.spring.rest.model.Person;
-import com.codecool.spring.rest.repository.AddressRepository;
-import com.codecool.spring.rest.repository.PersonRepository;
 import com.codecool.spring.rest.service.AddressService;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +15,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
