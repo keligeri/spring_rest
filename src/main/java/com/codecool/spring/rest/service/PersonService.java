@@ -7,45 +7,46 @@ import com.codecool.spring.rest.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class PersonService {
 
     private final PersonRepository personRepository;
-    private final AddressRepository addressRepository;
+    private final AddressService addressService;
 
     @Autowired
-    public  PersonService(PersonRepository personRepository, AddressRepository addressRepository) {
+    public  PersonService(PersonRepository personRepository, AddressService addressService) {
         this.personRepository = personRepository;
-        this.addressRepository = addressRepository;
+        this.addressService = addressService;
     }
 
-    public void savePerson(Person person) {
-        Address address = saveOrUpdateAddress(person);
-        person.setAddress(address);
-        personRepository.save(person);
-    }
+    public List<Person> findAll() { return personRepository.findAll(); }
 
-    private Address saveOrUpdateAddress(Person person) {
-        Address current = person.getAddress();
-        Address address = addressRepository.findByCityAndZipCode(current.getCity(), current.getZipCode());
-        if (address == null) {
-            addressRepository.save(current);
-            return current;
+    public Person findById(long id) { return personRepository.findOne(id); }
+
+    public void save(Person person) {
+        if (person.getAddress() != null) {
+            Address address = addressService.saveOrUpdateAddress(person);
+            person.setAddress(address);
         }
-        return address;
-    }
 
-    void deleteAddress(Set<Person> persons) {
-        persons.forEach(person -> person.setAddress(null));
+        personRepository.save(person);
     }
 
     public void update(long id, Person updatedPerson) {
         updatedPerson.setId(id);
-        Address address = saveOrUpdateAddress(updatedPerson);
+        Address address = addressService.saveOrUpdateAddress(updatedPerson);
         updatedPerson.setAddress(address);
 
         personRepository.save(updatedPerson);
+    }
+
+    public void delete(long id) {
+        personRepository.delete(id);
+    }
+
+    public void delete(Person person) {
+        personRepository.delete(person);
     }
 }
