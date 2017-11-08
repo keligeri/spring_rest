@@ -6,6 +6,10 @@ import javax.persistence.*;
 import javax.persistence.Id;
 
 @Entity
+//@NamedQueries({
+//        @NamedQuery(name = "findAllPerson", query = "select p from person p")
+//    }
+//)
 public class Person {
 
     @Id
