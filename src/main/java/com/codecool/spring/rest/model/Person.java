@@ -6,7 +6,12 @@ import javax.persistence.*;
 import javax.persistence.Id;
 
 @Entity
-@NamedQuery(name = "findAllPerson", query = "select p from Person p")
+@NamedQueries({
+        @NamedQuery(name = "findAllPerson", query = "select p from Person p"),
+        @NamedQuery(name = "findPersonByName", query = "select p from Person p where p.name = :personName"),
+        @NamedQuery(name = "findPersonsByBetweenTwoAge",
+                query = "select p from Person p where p.age between :personAge1 and :personAge2")
+})
 public class Person {
 
     @Id
