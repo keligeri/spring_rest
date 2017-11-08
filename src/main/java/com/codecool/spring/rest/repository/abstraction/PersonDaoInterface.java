@@ -11,7 +11,7 @@ public interface PersonDaoInterface {
 
     List<Person> getAll();
 
-    Person getById();
+    Person getById(long id);
 
     void savePerson(Person person);
 
