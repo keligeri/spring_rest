@@ -1,6 +1,5 @@
 package com.codecool.spring.rest.utils;
 
-import com.codecool.spring.rest.Application;
 import com.codecool.spring.rest.model.Address;
 import com.codecool.spring.rest.model.Person;
 import com.codecool.spring.rest.repository.AddressRepository;
@@ -29,8 +28,8 @@ public class DataLoader implements ApplicationRunner {
 
         Address zeg = new Address(8900L, "Zalaegerszeg");
         Address pest = new Address(1146L, "Budapest");
-        addressRepository.save(zeg);
-        addressRepository.save(pest);
+//        addressRepository.save(zeg);
+//        addressRepository.save(pest);
 
         gergo.setAddress(zeg);
         pisti.setAddress(pest);

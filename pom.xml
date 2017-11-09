@@ -66,11 +66,6 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.0.12.Final</version>
         </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.0.12.Final</version>
-        </dependency>
         <!--  PostgreSQL driver  -->
         <dependency>
             <groupId>org.postgresql</groupId>

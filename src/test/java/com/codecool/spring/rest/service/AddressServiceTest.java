@@ -60,14 +60,14 @@ public class AddressServiceTest {
     @Test
     public void save_IfSaveAddress_ThenReturnNothing() {
         Address newAddress = new Address(2500, "Gyula");
-        doNothing().when(addressRepository).save(newAddress);
+        when(addressRepository.save(newAddress)).thenReturn(null);
 
         addressService.save(newAddress);
     }
 
     @Test
     public void update_IfInvoke_DoNothing() {
-        doNothing().when(addressRepository).save(budapest);
+        when(addressRepository.save(budapest)).thenReturn(null);
         addressService.update(1, budapest);
     }
 

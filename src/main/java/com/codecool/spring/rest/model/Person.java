@@ -6,6 +6,12 @@ import javax.persistence.*;
 import javax.persistence.Id;
 
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "findAllPerson", query = "select p from Person p"),
+        @NamedQuery(name = "findPersonByName", query = "select p from Person p where p.name = :personName"),
+        @NamedQuery(name = "findPersonsByBetweenTwoAge",
+                query = "select p from Person p where p.age between :personAge1 and :personAge2")
+})
 public class Person {
 
     @Id
@@ -16,7 +22,7 @@ public class Person {
     private String name;
     private int age;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonBackReference
     private Address address;
 

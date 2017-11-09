@@ -2,7 +2,6 @@ package com.codecool.spring.rest.controller;
 
 import com.codecool.spring.rest.exception.PersonNotFoundException;
 import com.codecool.spring.rest.model.Person;
-import com.codecool.spring.rest.repository.PersonRepository;
 import com.codecool.spring.rest.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
