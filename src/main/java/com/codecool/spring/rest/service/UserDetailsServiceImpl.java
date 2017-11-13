@@ -1,13 +1,13 @@
 package com.codecool.spring.rest.service;
 
+import com.codecool.spring.rest.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
-/**
- * Created by keli on 2017.11.13..
- */
+@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserService userService;
@@ -19,8 +19,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        userService.findByUsername(s);
-        return null;
+        User user = userService.findByUsername(s);
+        if (user == null) {
+            throw new UsernameNotFoundException(s);
+        }
+
+        return new UserDetailsImpl(user);
     }
 
 }
