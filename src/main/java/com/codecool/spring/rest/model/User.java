@@ -1,5 +1,7 @@
 package com.codecool.spring.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -20,7 +22,10 @@ public class User {
     private Role role;
 
     @OneToMany(mappedBy = "user")
+    @JsonBackReference
     private List<Person> persons;
+
+    public User() {}
 
     public User(String username, String password, Role role, List<Person> persons) {
         this.username = username;

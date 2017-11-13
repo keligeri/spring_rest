@@ -1,5 +1,7 @@
 package com.codecool.spring.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -14,7 +16,10 @@ public class Role {
     private String role;
 
     @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE)
+    @JsonBackReference
     private List<User> users;
+
+    public Role() {}
 
     public Role(String role, List<User> users) {
         this.role = role;
