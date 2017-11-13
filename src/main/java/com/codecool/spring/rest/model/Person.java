@@ -26,6 +26,9 @@ public class Person {
     @JsonBackReference
     private Address address;
 
+    @ManyToOne
+    private User user;
+
     public Person() {}
 
     public Person(String name, int age) {
@@ -37,6 +40,13 @@ public class Person {
         this.name = name;
         this.age = age;
         this.address = address;
+    }
+
+    public Person(String name, int age, Address address, User user) {
+        this.name = name;
+        this.age = age;
+        this.address = address;
+        this.user = user;
     }
 
     public Address getAddress() {
@@ -69,5 +79,13 @@ public class Person {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
