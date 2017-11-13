@@ -1,5 +1,4 @@
-package com.codecool.spring.rest.utils;
-
+package com.codecool.spring.rest.authentication;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
