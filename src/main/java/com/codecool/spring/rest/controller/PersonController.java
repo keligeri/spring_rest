@@ -1,6 +1,6 @@
 package com.codecool.spring.rest.controller;
 
-import com.codecool.spring.rest.exception.PersonNotFoundException;
+import com.codecool.spring.rest.exception.EntityNotFoundException;
 import com.codecool.spring.rest.model.Person;
 import com.codecool.spring.rest.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class PersonController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Person getById(@PathVariable Long id) throws PersonNotFoundException {
+    public Person getById(@PathVariable Long id) throws EntityNotFoundException {
         isValidPerson(id);
 
         return personService.findById(id);
@@ -41,7 +41,7 @@ public class PersonController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public String update(@PathVariable long id, @RequestBody Person updatedPerson) throws PersonNotFoundException {
+    public String update(@PathVariable long id, @RequestBody Person updatedPerson) throws EntityNotFoundException {
         isValidPerson(id);
 
         personService.update(id, updatedPerson);
@@ -49,22 +49,22 @@ public class PersonController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public String delete(@PathVariable long id) throws PersonNotFoundException {
+    public String delete(@PathVariable long id) throws EntityNotFoundException {
         isValidPerson(id);
 
         personService.delete(id);
         return statusOk;
     }
 
-    private void isValidPerson(long id) throws PersonNotFoundException {
+    private void isValidPerson(long id) throws EntityNotFoundException {
         Person person = personService.findById(id);
         if (person == null) {
-            throw new PersonNotFoundException("Person with id: " + id + " not found!");
+            throw new EntityNotFoundException("Person with id: " + id + " not found!");
         }
     }
 
-    @ExceptionHandler(PersonNotFoundException.class)
-    void handlePersonNotFound(PersonNotFoundException exception,
+    @ExceptionHandler(EntityNotFoundException.class)
+    void handlePersonNotFound(EntityNotFoundException exception,
                               HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
     }
