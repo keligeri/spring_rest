@@ -3,6 +3,7 @@ package com.codecool.spring.rest.service;
 import com.codecool.spring.rest.model.User;
 import com.codecool.spring.rest.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,10 +12,12 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> findAll() {
@@ -35,6 +38,9 @@ public class UserService {
     }
 
     public void save(User user) {
+        System.out.println(user.getPassword());
+        String hashedPass = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPass);
         userRepository.save(user);
     }
 
