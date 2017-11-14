@@ -4,29 +4,26 @@ import com.codecool.spring.rest.model.Address;
 import com.codecool.spring.rest.model.Person;
 import com.codecool.spring.rest.model.Role;
 import com.codecool.spring.rest.model.User;
-import com.codecool.spring.rest.repository.AddressRepository;
 import com.codecool.spring.rest.repository.PersonRepository;
-import com.codecool.spring.rest.repository.RoleRepository;
 import com.codecool.spring.rest.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DataLoader implements ApplicationRunner {
 
-    private final AddressRepository addressRepository;
     private final PersonRepository personRepository;
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+//    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public DataLoader(AddressRepository addressRepository, PersonRepository personRepository, UserRepository userRepository, RoleRepository roleRepository) {
-        this.addressRepository = addressRepository;
+    public DataLoader(PersonRepository personRepository, UserRepository userRepository) {
         this.personRepository = personRepository;
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+//        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -34,8 +31,8 @@ public class DataLoader implements ApplicationRunner {
         Role adminRole = new Role("ROLE_ADMIN");
         Role userRole = new Role("ROLE_USER");
 
-        User admin = new User("admin", "admin", adminRole);
-        User user = new User("user", "user", userRole);
+        User admin = new User("admin", new BCryptPasswordEncoder().encode("admin"), adminRole);
+        User user = new User("user", new BCryptPasswordEncoder().encode("user"), userRole);
         userRepository.save(admin);
         userRepository.save(user);
 
