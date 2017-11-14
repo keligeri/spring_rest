@@ -1,5 +1,7 @@
 package com.codecool.spring.rest.service;
 
+import com.codecool.spring.rest.exception.EntityAlreadyExistsException;
+import com.codecool.spring.rest.exception.EntityNotFoundException;
 import com.codecool.spring.rest.model.User;
 import com.codecool.spring.rest.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +39,11 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void save(User user) {
-        System.out.println(user.getPassword());
-        String hashedPass = passwordEncoder.encode(user.getPassword());
-        user.setPassword(hashedPass);
+    public void save(User user) throws EntityNotFoundException {
+        if (findByUsername(user.getUsername()) != null) {
+            throw new EntityAlreadyExistsException("Enttiy already exists!");
+        }
+
         userRepository.save(user);
     }
 
