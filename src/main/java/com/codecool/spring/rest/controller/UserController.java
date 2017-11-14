@@ -1,5 +1,6 @@
 package com.codecool.spring.rest.controller;
 
+import com.codecool.spring.rest.exception.EntityAlreadyExistsException;
 import com.codecool.spring.rest.exception.EntityNotFoundException;
 import com.codecool.spring.rest.model.User;
 import com.codecool.spring.rest.service.UserService;
@@ -35,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping(value = {"/", ""})
-    public String saveUser(@RequestBody User user) {
+    public String saveUser(@RequestBody User user) throws EntityAlreadyExistsException {
         userService.save(user);
         return statusOk;
     }
@@ -57,6 +58,11 @@ public class UserController {
     @ExceptionHandler(EntityNotFoundException.class)
     public void handleUserNotFound(EntityNotFoundException exception, HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
+    }
+
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    public void handleUserAlreadyExists(EntityAlreadyExistsException exception, HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.CONFLICT.value(), exception.getMessage());
     }
 
     private void isValidUserId(long id) throws EntityNotFoundException {
