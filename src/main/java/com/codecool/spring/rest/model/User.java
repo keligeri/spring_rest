@@ -18,6 +18,7 @@ public class User {
 
     @Column(name = "user_name")
     private String username;
+    // have to ignore this getter!
     private String password;
 
     @ManyToOne(cascade = CascadeType.PERSIST)

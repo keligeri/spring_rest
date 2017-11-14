@@ -17,13 +17,13 @@ public class DataLoader implements ApplicationRunner {
 
     private final PersonRepository personRepository;
     private final UserRepository userRepository;
-//    private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public DataLoader(PersonRepository personRepository, UserRepository userRepository) {
+    public DataLoader(PersonRepository personRepository, UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.personRepository = personRepository;
         this.userRepository = userRepository;
-//        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -31,8 +31,8 @@ public class DataLoader implements ApplicationRunner {
         Role adminRole = new Role("ROLE_ADMIN");
         Role userRole = new Role("ROLE_USER");
 
-        User admin = new User("admin", new BCryptPasswordEncoder().encode("admin"), adminRole);
-        User user = new User("user", new BCryptPasswordEncoder().encode("user"), userRole);
+        User admin = new User("admin", "admin", adminRole);
+        User user = new User("user", "user", userRole);
         userRepository.save(admin);
         userRepository.save(user);
 
