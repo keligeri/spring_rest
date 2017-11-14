@@ -1,6 +1,7 @@
 package com.codecool.spring.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
@@ -8,14 +9,14 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User {
-
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "user_name")
     private String username;
-
+    // have to ignore this getter!
     private String password;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
