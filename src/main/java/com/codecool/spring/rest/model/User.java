@@ -2,6 +2,8 @@ package com.codecool.spring.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,7 +18,6 @@ public class User {
 
     @Column(name = "user_name")
     private String username;
-    // have to ignore this getter!
     private String password;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
@@ -30,20 +31,34 @@ public class User {
 
     public User(String username, String password, Role role, List<Person> persons) {
         this.username = username;
-        this.password = password;
+        this.password = encodePassword(password);
         this.role = role;
         this.persons = persons;
     }
 
     public User(String username, String password, Role role) {
         this.username = username;
-        this.password = password;
+        this.password = encodePassword(password);
         this.role = role;
     }
 
     public User(String username, String password) {
         this.username = username;
-        this.password = password;
+        this.password = encodePassword(password);
+    }
+
+    private String encodePassword(String password) {
+        return new BCryptPasswordEncoder().encode(password);
+    }
+
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = encodePassword(password);
     }
 
     public Role getRole() {
@@ -78,11 +93,4 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
