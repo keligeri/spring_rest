@@ -1,9 +1,6 @@
 package com.codecool.spring.rest.config;
 
-import com.codecool.spring.rest.authentication.AuthFailureHandler;
-import com.codecool.spring.rest.authentication.AuthSuccessHandler;
-import com.codecool.spring.rest.authentication.HttpAuthenticationEntryPoint;
-import com.codecool.spring.rest.authentication.HttpLogoutSuccessHandler;
+import com.codecool.spring.rest.authentication.*;
 import com.codecool.spring.rest.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -40,6 +39,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.failureHandler = failureHandler;
         this.logoutSuccessHandler = logoutSuccessHandler;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Bean
+    public JsonAuthenticationFilter jsonAuthenticationFilter() throws Exception {
+        JsonAuthenticationFilter jsonAuthenticationFilter = new JsonAuthenticationFilter();
+        jsonAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
+        jsonAuthenticationFilter.setAuthenticationSuccessHandler(successHandler);
+
+        return jsonAuthenticationFilter;
     }
 
     @Bean
@@ -76,7 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.csrf().disable().addFilter(jsonAuthenticationFilter())
                 .authorizeRequests()
                 .antMatchers("/person/**").permitAll()
                 .antMatchers("/address/**").hasRole("ADMIN")
@@ -87,9 +95,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .formLogin()
                 .permitAll()
-                .loginProcessingUrl("/login/")
-                .usernameParameter("username")
-                .passwordParameter("password")
+//                .loginProcessingUrl("/login")     // not necessary
+//                .usernameParameter("username")
+//                .passwordParameter("password")
                 .successHandler(successHandler)
                 .failureHandler(failureHandler)
             .and()
