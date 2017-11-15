@@ -1,11 +1,11 @@
 package com.codecool.spring.rest.service;
 
+import com.codecool.spring.rest.authentication.LoggedInChecker;
 import com.codecool.spring.rest.exception.EntityAlreadyExistsException;
 import com.codecool.spring.rest.exception.EntityNotFoundException;
 import com.codecool.spring.rest.model.User;
 import com.codecool.spring.rest.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,12 +14,12 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final LoggedInChecker loggedInChecker;
 
     @Autowired
-    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, LoggedInChecker loggedInChecker) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.loggedInChecker = loggedInChecker;
     }
 
     public List<User> findAll() {
@@ -49,6 +49,10 @@ public class UserService {
 
     public void delete(long id) {
         userRepository.delete(id);
+    }
+
+    public User getCurrentUser() {
+        return loggedInChecker.getLoggedInUser();
     }
 
 }
