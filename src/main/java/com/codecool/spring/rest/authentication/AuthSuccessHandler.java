@@ -36,12 +36,12 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                                         Authentication authentication) throws IOException, ServletException {
         httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = userDetails.getUser();
-//        userDetails.setUser(user);    WHY??
 
         PrintWriter writer = httpServletResponse.getWriter();
-        mapper.writeValue(writer, user);
+        mapper.writeValue(writer, "Authenticated with " + user.getRole().getRole()
+                .substring(5) + " role!");
         writer.flush();
     }
 
