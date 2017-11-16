@@ -1,6 +1,6 @@
 package com.codecool.spring.rest.controller;
 
-import com.codecool.spring.rest.exception.AddressNotFoundException;
+import com.codecool.spring.rest.exception.EntityNotFoundException;
 import com.codecool.spring.rest.model.Address;
 import com.codecool.spring.rest.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Address getById(@PathVariable long id) throws AddressNotFoundException {
+    public Address getById(@PathVariable long id) throws EntityNotFoundException {
         isValidAddress(id);
         return addressService.findById(id);
     }
@@ -41,7 +41,7 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public String update(@PathVariable long id, @RequestBody Address updatedAddress) throws AddressNotFoundException {
+    public String update(@PathVariable long id, @RequestBody Address updatedAddress) throws EntityNotFoundException {
         isValidAddress(id);
 
         addressService.update(id, updatedAddress);
@@ -49,22 +49,22 @@ public class AddressController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public String delete(@PathVariable long id) throws AddressNotFoundException {
+    public String delete(@PathVariable long id) throws EntityNotFoundException {
         isValidAddress(id);
 
         addressService.delete(id);
         return statusOk;
     }
 
-    @ExceptionHandler(AddressNotFoundException.class)
-    public void handleAddressNotFound(AddressNotFoundException exception, HttpServletResponse response) throws IOException {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public void handleAddressNotFound(EntityNotFoundException exception, HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.NOT_FOUND.value(), exception.getMessage());
     }
 
-    private void isValidAddress(long id) throws AddressNotFoundException {
+    private void isValidAddress(long id) throws EntityNotFoundException {
         Address address = addressService.findById(id);
         if (address == null) {
-            throw new AddressNotFoundException("Address with id: " + id + " not found!");
+            throw new EntityNotFoundException("Address with id: " + id + " not found!");
         }
     }
 
